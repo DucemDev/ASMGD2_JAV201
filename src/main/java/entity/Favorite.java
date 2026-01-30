@@ -7,6 +7,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,7 +20,7 @@ public class Favorite {
     private String FavoriteId;
     //    private String UserId;
 //    private String RestaurantId;
-    private String LikedAt;
+    private LocalDateTime LikedAt;
 
     @ManyToOne
     @JoinColumn(name = "UserId")

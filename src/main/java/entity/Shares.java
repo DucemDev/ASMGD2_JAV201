@@ -6,6 +6,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @Setter
@@ -18,7 +20,7 @@ public class Shares {
 //    private String UserId;
 //    private String RestaurantId;
     private String RecipientEmail;
-    private String ShareAt;
+    private LocalDateTime ShareAt;
 
     @ManyToOne
     @JoinColumn(name = "UserId")

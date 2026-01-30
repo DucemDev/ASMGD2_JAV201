@@ -28,5 +28,7 @@ public class Users {
     private List<Shares> shares;
     @OneToMany(mappedBy = "user")
     private List<Favorite> favorites;
+    @OneToMany(mappedBy = "user")
+    private List<ViewHistory> viewHistory;
 
 }

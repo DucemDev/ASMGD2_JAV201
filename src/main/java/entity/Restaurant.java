@@ -24,5 +24,7 @@ public class Restaurant {
     private List<Favorite> favorites;
     @OneToMany(mappedBy = "restaurant")
     private List<Shares> shares;
+    @OneToMany(mappedBy = "restaurant")
+    private List<ViewHistory> viewHistory;
 
 }
