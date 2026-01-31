@@ -1,9 +1,6 @@
 package entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -14,21 +11,37 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "Users", schema = "dbo")
 public class Users {
+
     @Id
-    private String UserId;
-    private String Username;
-    private String Password;
-    private String Email;
-    private boolean Role;
-    private String OtpCode;
-    private boolean Status;
+    @Column(name = "UserId")
+    private String userId;
+
+    @Column(name = "UserName")
+    private String username;
+
+    @Column(name = "Password")
+    private String password;
+
+    @Column(name = "Email")
+    private String email;
+
+    @Column(name = "Role")
+    private boolean role;
+
+    @Column(name = "OtpCode")
+    private String otpCode;
+
+    @Column(name = "Status")
+    private boolean status;
 
     @OneToMany(mappedBy = "user")
     private List<Shares> shares;
+
     @OneToMany(mappedBy = "user")
     private List<Favorite> favorites;
+
     @OneToMany(mappedBy = "user")
     private List<ViewHistory> viewHistory;
-
 }

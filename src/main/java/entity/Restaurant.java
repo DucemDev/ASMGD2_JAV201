@@ -1,8 +1,6 @@
 package entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -13,18 +11,31 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "Restaurant", schema = "dbo")
 public class Restaurant {
+
     @Id
-    private String RestaurantId;
-    private String Name;
-    private String PosterUrl;
-    private String VideoUrl;
-    private int ViewCount;
+    @Column(name = "RestaurantId")
+    private String restaurantId;
+
+    @Column(name = "Name")
+    private String name;
+
+    @Column(name = "PosterUrl")
+    private String posterUrl;
+
+    @Column(name = "VideoUrl")
+    private String videoUrl;
+
+    @Column(name = "ViewCount")
+    private int viewCount;
+
     @OneToMany(mappedBy = "restaurant")
     private List<Favorite> favorites;
+
     @OneToMany(mappedBy = "restaurant")
     private List<Shares> shares;
+
     @OneToMany(mappedBy = "restaurant")
     private List<ViewHistory> viewHistory;
-
 }

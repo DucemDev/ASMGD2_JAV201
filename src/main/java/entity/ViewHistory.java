@@ -1,11 +1,9 @@
 package entity;
 
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -13,16 +11,24 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "ViewHistory", schema = "dbo")
 public class ViewHistory {
+
     @Id
-    private String HistoryId;
-//    private String UserId;
-//    private String RestaurantId;
-    private String ViewAt;
+    @Column(name = "HistoryId")
+    private String historyId;
+
+    @Column(name = "ViewedAt")
+    private LocalDateTime viewedAt;
+
     @ManyToOne
     @JoinColumn(name = "UserId")
     private Users user;
+
     @ManyToOne
     @JoinColumn(name = "RestaurantId")
     private Restaurant restaurant;
+    @Transient
+    private String viewedAtFormatted;
+
 }

@@ -1,10 +1,6 @@
 package entity;
 
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,12 +11,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "Favorite", schema = "dbo")
 public class Favorite {
+
     @Id
-    private String FavoriteId;
-    //    private String UserId;
-//    private String RestaurantId;
-    private LocalDateTime LikedAt;
+    @Column(name = "FavoriteId")
+    private String favoriteId;
+
+    @Column(name = "LikedAt")
+    private LocalDateTime likedAt;
 
     @ManyToOne
     @JoinColumn(name = "UserId")

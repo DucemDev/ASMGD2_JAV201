@@ -10,4 +10,8 @@ public interface RestaurantDAO {
     void create(Restaurant restaurant);
     void update(Restaurant restaurant);
     void delete(String id);
+    List<Restaurant> findTop6ByView();
+    void increaseView(String id);
+    List<Restaurant> findPage(int page, int size);
+    List<Restaurant> searchByName(String keyword);
 }

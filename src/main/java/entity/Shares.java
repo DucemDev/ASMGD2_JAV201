@@ -1,26 +1,29 @@
 package entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
+@Table(name = "Shares", schema = "dbo")
 public class Shares {
+
     @Id
-    private String ShareId;
-//    private String UserId;
-//    private String RestaurantId;
-    private String RecipientEmail;
-    private LocalDateTime ShareAt;
+    @Column(name = "ShareId")
+    private String shareId;
+
+    @Column(name = "RecipientEmail")
+    private String recipientEmail;
+
+    // 🔥 SỬA ĐÚNG TÊN CỘT
+    @Column(name = "SharedAt")
+    private LocalDateTime sharedAt;
 
     @ManyToOne
     @JoinColumn(name = "UserId")
