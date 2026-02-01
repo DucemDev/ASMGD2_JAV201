@@ -6,10 +6,8 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
-
-@WebFilter({"/admin/*","/page/*"})
+@WebFilter("/views/admin/*")
 public class AdminAuthFilter implements Filter {
-
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain)
@@ -35,7 +33,8 @@ public class AdminAuthFilter implements Filter {
             return;
         }
 
-        // ✅ OK → CHO ĐI TIẾP
+        // ✅ OK
         chain.doFilter(request, response);
     }
 }
+
