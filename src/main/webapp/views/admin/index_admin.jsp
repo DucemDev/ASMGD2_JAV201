@@ -9,6 +9,9 @@
           rel="stylesheet">
 </head>
 <body>
+<c:if test="${empty sessionScope.authUser || !sessionScope.authUser.role}">
+    <c:redirect url="/login"/>
+</c:if>
 <ul>
     <li>
         <a href="<c:url value='/page/reports' />">Báo cáo & thống kê</a>

@@ -14,6 +14,9 @@
   </style>
 </head>
 <body class="container py-4">
+<c:if test="${empty sessionScope.authUser || !sessionScope.authUser.role}">
+  <c:redirect url="/login"/>
+</c:if>
 <h2 class="mb-4">⚙️ Quản lý Nhà hàng</h2>
 
 <div class="row">

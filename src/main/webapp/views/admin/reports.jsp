@@ -14,6 +14,9 @@
 	</style>
 </head>
 <body class="bg-light">
+<c:if test="${empty sessionScope.authUser || !sessionScope.authUser.role}">
+	<c:redirect url="/login"/>
+</c:if>
 <div class="container-fluid py-4">
 	<div class="d-flex justify-content-between mb-4 px-2">
 		<h2 class="text-primary fw-bold">REPORT DASHBOARD</h2>

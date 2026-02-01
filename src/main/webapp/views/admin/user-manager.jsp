@@ -13,6 +13,9 @@
   </style>
 </head>
 <body class="container py-4">
+<c:if test="${empty sessionScope.authUser || !sessionScope.authUser.role}">
+  <c:redirect url="/login"/>
+</c:if>
 <h2 class="mb-4 text-primary">👥 Quản lý tài khoản người dùng</h2>
 
 <div class="card mb-4 shadow-sm">

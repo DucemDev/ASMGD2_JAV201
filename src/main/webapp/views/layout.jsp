@@ -22,11 +22,12 @@
     🦉 Owl Review
   </span>
 
-    <c:if test="${not empty sessionScope.user}">
+    <c:if test="${not empty sessionScope.authUser}">
         <p class="text-white mb-0 me-3">
-            Xin chào ${sessionScope.user.username}
+            Xin chào ${sessionScope.authUser.username}
         </p>
     </c:if>
+
 
     <div class="ms-auto d-flex align-items-center">
 
