@@ -49,6 +49,14 @@
                         <button class="btn btn-primary w-100">
                             Đăng nhập
                         </button>
+                        <div class="text-center mt-3">
+                            <a href="<c:url value='/forgot-password'/>"
+                               class="text-decoration-none">
+                                Quên mật khẩu?
+                            </a>
+
+                        </div>
+
                     </form>
 
                     <!-- REGISTER FORM -->

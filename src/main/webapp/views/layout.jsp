@@ -74,6 +74,10 @@
                class="text-white d-block my-2 text-decoration-none">
                 🕒 Đã xem
             </a>
+            <a href="${pageContext.request.contextPath}/setting"
+               class="text-white d-block my-2 text-decoration-none">
+                 Cài đặt tài khoản
+            </a>
         </div>
 
         <!-- CONTENT -->

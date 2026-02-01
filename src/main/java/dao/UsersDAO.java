@@ -11,4 +11,10 @@ public interface UsersDAO {
     void delete(String id);
     Users findByEmail(String email);
 
+
+    void updateOtp(String email, String otp);
+
+    void resetPassword(String email, String newPassword);
+    boolean verifyOtp(String email, String otp);
+
 }

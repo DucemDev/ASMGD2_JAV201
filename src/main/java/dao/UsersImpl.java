@@ -4,6 +4,7 @@ import entity.Users;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import util.XJPA;
+
 import java.util.List;
 
 public class UsersImpl implements UsersDAO {
@@ -77,7 +78,6 @@ public class UsersImpl implements UsersDAO {
     }
 
 
-
     @Override
     public Users findByEmail(String email) {
         EntityManager em = XJPA.getEntityManager();
@@ -88,6 +88,79 @@ public class UsersImpl implements UsersDAO {
                     .getSingleResult();
         } catch (NoResultException e) {
             return null;
+        } finally {
+            em.close();
+        }
+    }@Override
+    public void updateOtp(String email, String otp) {
+        EntityManager em = XJPA.getEntityManager();
+        try {
+            em.getTransaction().begin();
+
+            int updated = em.createQuery(
+                            "UPDATE Users u SET u.otpCode = :otp WHERE u.email = :email"
+                    )
+                    .setParameter("otp", otp)
+                    .setParameter("email", email)
+                    .executeUpdate();
+
+            em.getTransaction().commit();
+            em.clear(); // ⬅️ BẮT BUỘC
+
+            System.out.println("OTP UPDATED ROW = " + updated);
+            System.out.println("OTP SAVED TO DB = " + otp);
+
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+    }
+
+
+
+    @Override
+    public void resetPassword(String email, String newPassword) {
+        EntityManager em = XJPA.getEntityManager();
+        try {
+            em.getTransaction().begin();
+
+            int updated = em.createQuery(
+                            "UPDATE Users u " +
+                                    "SET u.password = :password, u.otpCode = NULL " +
+                                    "WHERE u.email = :email"
+                    )
+                    .setParameter("password", newPassword)
+                    .setParameter("email", email)
+                    .executeUpdate();
+
+            em.getTransaction().commit();
+
+            System.out.println("RESET PASSWORD UPDATED ROW = " + updated);
+
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public boolean verifyOtp(String email, String otp) {
+        EntityManager em = XJPA.getEntityManager();
+        try {
+            Long count = em.createQuery(
+                            "SELECT COUNT(u) FROM Users u " +
+                                    "WHERE u.email = :email AND u.otpCode = :otp",
+                            Long.class
+                    )
+                    .setParameter("email", email)
+                    .setParameter("otp", otp)
+                    .getSingleResult();
+
+            return count == 1;
         } finally {
             em.close();
         }
