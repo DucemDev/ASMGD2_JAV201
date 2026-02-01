@@ -1,7 +1,6 @@
 package dao;
 
 import entity.Users;
-
 import java.util.List;
 
 public interface UsersDAO {
@@ -9,5 +8,5 @@ public interface UsersDAO {
     List<Users> findAll();
     void create(Users user);
     void update(Users user);
-    void delete(Users user);
+    void delete(String id);
 }
