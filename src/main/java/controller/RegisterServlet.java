@@ -52,7 +52,7 @@ public class RegisterServlet extends HttpServlet {
         }
 
         Users user = new Users();
-        user.setUserId(java.util.UUID.randomUUID().toString());
+
         user.setUsername(username);
         user.setPassword(password);
         user.setEmail(email);
