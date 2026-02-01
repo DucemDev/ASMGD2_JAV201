@@ -8,6 +8,22 @@ import java.util.List;
 public class ReportImpl implements ReportDAO {
 
     @Override
+    public List<Object[]> findCommentsByRestaurant(String restaurantId) {
+        EntityManager em = XJPA.getEntityManager();
+        try {
+            // Đảm bảo c.user.username khớp với biến trong entity Users
+            String jpql = "SELECT c.user.username, c.content, c.createdAt " +
+                    "FROM Comment c WHERE c.restaurant.restaurantId = :rid " +
+                    "ORDER BY c.createdAt DESC";
+            return em.createQuery(jpql, Object[].class)
+                    .setParameter("rid", restaurantId)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
     public List<Object[]> countLikesByRestaurant() {
         EntityManager em = XJPA.getEntityManager();
         try {
@@ -24,7 +40,6 @@ public class ReportImpl implements ReportDAO {
     public List<Users> findUsersByLikedRestaurant(String restaurantId) {
         EntityManager em = XJPA.getEntityManager();
         try {
-            // SỬA: Dùng f.restaurant.restaurantId
             String jpql = "SELECT f.user FROM Favorite f WHERE f.restaurant.restaurantId = :rid";
             return em.createQuery(jpql, Users.class)
                     .setParameter("rid", restaurantId)
@@ -46,5 +61,4 @@ public class ReportImpl implements ReportDAO {
             em.close();
         }
     }
-
 }

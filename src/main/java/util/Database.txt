@@ -91,5 +91,19 @@ VALUES
 ('Highlands Coffee', 'highlands.jpg', 'https://youtube.com/highlands', 300),
 ('Gogi House', 'gogi.jpg', 'https://youtube.com/gogi', 180);
 
-
 SELECT * FROM Users
+INSERT INTO Favorite (UserId, RestaurantId, LikedAt)
+VALUES
+(1, 1, GETDATE()), -- Nguyen Van A like Pho 24
+(2, 1, GETDATE()), -- Tran Thi B like Pho 24
+(1, 5, GETDATE()); -- Nguyen Van A like Highlands Coffee
+INSERT INTO Shares (UserId, RestaurantId, RecipientEmail, SharedAt)
+VALUES
+(1, 1, 'friend1@gmail.com', GETDATE()), -- Nguyen Van A share Pho 24 cho friend1
+(1, 1, 'workmate@company.com', GETDATE()), -- Nguyen Van A share Pho 24 cho đồng nghiệp
+(3, 5, 'family@gmail.com', GETDATE());    -- Le Van C share Highlands Coffee cho gia đình
+INSERT INTO Comment (UserId, RestaurantId, Content, CreatedAt)
+VALUES
+(1, 1, N'Phở ở đây rất ngon, nước dùng đậm đà!', GETDATE()),
+(2, 1, N'Giá hơi cao nhưng chất lượng phục vụ tốt.', GETDATE()),
+(3, 5, N'Không gian quán đẹp, thích hợp để làm việc.', GETDATE());
