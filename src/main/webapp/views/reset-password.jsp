@@ -1,41 +1,35 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"
+         isELIgnored="false" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Đặt lại mật khẩu - Owl Review</title>
+<div class="container mt-4">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-</head>
-<body class="bg-light">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
 
-<div class="container">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
 
-            <div class="card shadow">
-                <div class="card-header text-center fw-bold">
-                    🦉 Đặt lại mật khẩu
+                <div class="card-header bg-white text-center fw-semibold">
+                    Đặt lại mật khẩu
                 </div>
 
-                <div class="card-body">
+                <div class="card-body p-4">
 
                     <form method="post"
                           action="<c:url value='/reset-password'/>">
 
                         <div class="mb-3">
-                            <label>Mã OTP</label>
+                            <label class="form-label">Mã OTP</label>
                             <input type="text"
                                    name="otp"
                                    class="form-control"
-                                   placeholder="Nhập mã OTP"
+                                   placeholder="Nhập mã OTP đã nhận"
                                    required>
                         </div>
 
                         <div class="mb-3">
-                            <label>Mật khẩu mới</label>
+                            <label class="form-label">Mật khẩu mới</label>
                             <input type="password"
                                    name="password"
                                    class="form-control"
@@ -43,8 +37,8 @@
                                    required>
                         </div>
 
-                        <button class="btn btn-success w-100">
-                            Đổi mật khẩu
+                        <button class="btn btn-success w-100 mt-2">
+                            Xác nhận đổi mật khẩu
                         </button>
                     </form>
 
@@ -56,10 +50,10 @@
 
                 </div>
 
-                <div class="card-footer text-center">
+                <div class="card-footer bg-white text-center">
                     <a href="<c:url value='/login'/>"
                        class="text-decoration-none">
-                        ← Quay lại đăng nhập
+                        Quay lại đăng nhập
                     </a>
                 </div>
 
@@ -67,7 +61,5 @@
 
         </div>
     </div>
-</div>
 
-</body>
-</html>
+</div>

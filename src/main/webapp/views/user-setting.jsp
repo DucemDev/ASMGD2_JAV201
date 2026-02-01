@@ -1,73 +1,108 @@
 <%@ page contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"
          isELIgnored="false" %>
-
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Cài đặt tài khoản</title>
-</head>
-<body>
+<div class="container">
 
-<h2>⚙️ Cài đặt tài khoản</h2>
+    <!-- TITLE -->
+    <div class="mb-4">
+        <h3 class="fw-semibold">Cài đặt tài khoản</h3>
+        <p class="text-muted mb-0">
+            Xin chào <strong>${sessionScope.authUser.username}</strong>
+        </p>
+    </div>
 
-<p>Xin chào <b>${sessionScope.authUser.username}</b></p>
+    <!-- MESSAGE -->
+    <c:if test="${not empty error}">
+        <div class="alert alert-danger">
+                ${error}
+        </div>
+    </c:if>
 
-<c:if test="${not empty error}">
-    <p style="color:red">${error}</p>
-</c:if>
+    <c:if test="${not empty message}">
+        <div class="alert alert-success">
+                ${message}
+        </div>
+    </c:if>
 
-<c:if test="${not empty message}">
-    <p style="color:green">${message}</p>
-</c:if>
+    <div class="row g-4">
 
-<hr>
+        <!-- ===== ĐỔI MẬT KHẨU ===== -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header fw-semibold">
+                    Đổi mật khẩu
+                </div>
 
-<!-- ===== ĐỔI MẬT KHẨU ===== -->
-<h3>🔑 Đổi mật khẩu</h3>
-<form method="post"
-      action="${pageContext.request.contextPath}/setting">
+                <div class="card-body">
+                    <form method="post"
+                          action="${pageContext.request.contextPath}/setting">
 
-    <input type="hidden" name="action" value="changePassword"/>
+                        <input type="hidden" name="action" value="changePassword"/>
 
-    <input type="password"
-           name="oldPassword"
-           placeholder="Mật khẩu cũ"
-           required><br><br>
+                        <div class="mb-3">
+                            <label class="form-label">Mật khẩu cũ</label>
+                            <input type="password"
+                                   name="oldPassword"
+                                   class="form-control"
+                                   required>
+                        </div>
 
-    <input type="password"
-           name="newPassword"
-           placeholder="Mật khẩu mới"
-           required><br><br>
+                        <div class="mb-3">
+                            <label class="form-label">Mật khẩu mới</label>
+                            <input type="password"
+                                   name="newPassword"
+                                   class="form-control"
+                                   required>
+                        </div>
 
-    <button type="submit">Đổi mật khẩu</button>
-</form>
+                        <button class="btn btn-primary">
+                            Cập nhật mật khẩu
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-<hr>
+        <!-- ===== CẬP NHẬT THÔNG TIN ===== -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header fw-semibold">
+                    Thông tin cá nhân
+                </div>
 
-<!-- ===== CẬP NHẬT THÔNG TIN ===== -->
-<h3>✏️ Thông tin cá nhân</h3>
-<form method="post"
-      action="${pageContext.request.contextPath}/setting">
+                <div class="card-body">
+                    <form method="post"
+                          action="${pageContext.request.contextPath}/setting">
 
-    <input type="hidden" name="action" value="updateInfo"/>
+                        <input type="hidden" name="action" value="updateInfo"/>
 
-    <input type="text"
-           name="username"
-           value="${sessionScope.authUser.username}"
-           required>
+                        <div class="mb-3">
+                            <label class="form-label">Tên hiển thị</label>
+                            <input type="text"
+                                   name="username"
+                                   class="form-control"
+                                   value="${sessionScope.authUser.username}"
+                                   required>
+                        </div>
 
-    <button type="submit">Lưu</button>
-</form>
+                        <button class="btn btn-success">
+                            Lưu thay đổi
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-<hr>
+    </div>
 
-<!-- ===== LOGOUT ===== -->
-<a href="${pageContext.request.contextPath}/setting?action=logout">
-    🚪 Đăng xuất
-</a>
+    <!-- LOGOUT -->
+    <div class="mt-4">
+        <a href="${pageContext.request.contextPath}/setting?action=logout"
+           class="btn btn-outline-danger btn-sm">
+            Đăng xuất
+        </a>
+    </div>
 
-</body>
-</html>
+</div>

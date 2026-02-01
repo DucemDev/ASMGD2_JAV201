@@ -1,17 +1,26 @@
 package dao;
 
 import entity.Restaurant;
-
 import java.util.List;
 
 public interface RestaurantDAO {
-    Restaurant findbyid(String id);
-    List<Restaurant> findall();
+
+    Restaurant findById(Integer id);
+
+    List<Restaurant> findAll();
+
     void create(Restaurant restaurant);
+
     void update(Restaurant restaurant);
-    void delete(String id);
-    List<Restaurant> findTop6ByView();
-    void increaseView(String id);
-    List<Restaurant> findPage(int page, int size);
+
+    void delete(Integer id);
+
+    void increaseView(Integer id);
+
     List<Restaurant> searchByName(String keyword);
+
+    List<Restaurant> findTop6ByView();
+
+    List<Restaurant> findPage(int page, int size);
 }
+

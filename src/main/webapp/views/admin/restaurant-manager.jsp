@@ -76,8 +76,19 @@
       <td><img src="${item.posterUrl}" width="80" class="rounded shadow-sm"></td>
       <td>${item.viewCount}</td>
       <td>
-        <a href="${pageContext.request.contextPath}/restaurant/edit?id=${item.restaurantId}" class="btn btn-sm btn-warning">Sửa</a>
-        <a href="${pageContext.request.contextPath}/restaurant/delete?id=${item.restaurantId}" class="btn btn-sm btn-danger" onclick="return confirm('Xóa quán này?')">Xóa</a>
+        <a href="${pageContext.request.contextPath}/admin/restaurants/edit/${r.restaurantId}"
+           class="btn btn-sm btn-warning">
+          Sửa
+        </a>
+
+
+        <a href="${pageContext.request.contextPath}/admin/restaurants/delete/${r.restaurantId}"
+           class="btn btn-sm btn-danger"
+           onclick="return confirm('Bạn chắc chắn muốn xóa?')">
+          Xóa
+        </a>
+
+
       </td>
     </tr>
   </c:forEach>

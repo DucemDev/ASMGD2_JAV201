@@ -5,9 +5,7 @@ import dao.UsersImpl;
 import entity.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 import org.apache.commons.beanutils.BeanUtils;
 
 import java.io.IOException;
@@ -22,54 +20,86 @@ import java.util.List;
         "/admin/users/reset"
 })
 public class UserServlet extends HttpServlet {
-    private UsersDAO dao = new UsersImpl();
 
+    private final UsersDAO dao = new UsersImpl();
+
+    // ================= GET =================
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
         String uri = req.getRequestURI();
 
-        if (uri.contains("edit")) {
-            String id = req.getPathInfo().substring(1); // Lấy ID từ URL /edit/username
+        // 🔐 CHECK ADMIN
+        Users admin = (Users) req.getSession().getAttribute("authUser");
+        if (admin == null || !admin.isRole()) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+
+        // ===== EDIT =====
+        if (uri.contains("/edit/")) {
+            Integer id = Integer.valueOf(req.getPathInfo().substring(1));
             Users user = dao.findById(id);
             req.setAttribute("form", user);
-        } else if (uri.contains("delete")) {
-            String id = req.getPathInfo().substring(1);
+        }
+
+        // ===== DELETE =====
+        else if (uri.contains("/delete/")) {
+            Integer id = Integer.valueOf(req.getPathInfo().substring(1));
             dao.delete(id);
             req.setAttribute("message", "Xóa người dùng thành công!");
-        } else if (uri.contains("reset")) {
+        }
+
+        // ===== RESET FORM =====
+        else if (uri.contains("/reset")) {
             req.setAttribute("form", new Users());
         }
 
-        this.findAll(req, resp);
-        req.getRequestDispatcher("/views/admin/user-manager.jsp").forward(req, resp);
+        // 🔥 LUÔN LOAD DATA
+        List<Users> list = dao.findAll();
+        req.setAttribute("items", list);
+
+        req.getRequestDispatcher("/views/admin/user-manager.jsp")
+                .forward(req, resp);
     }
 
+    // ================= POST =================
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        Users admin = (Users) req.getSession().getAttribute("authUser");
+        if (admin == null || !admin.isRole()) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+
         String uri = req.getRequestURI();
         Users user = new Users();
 
         try {
-            // Tự động đổ dữ liệu từ form vào object User
             BeanUtils.populate(user, req.getParameterMap());
 
-            if (uri.contains("create")) {
+            if (uri.contains("/create")) {
                 dao.create(user);
-                req.setAttribute("message", "Thêm mới thành công!");
-            } else if (uri.contains("update")) {
-                dao.update(user);
-                req.setAttribute("message", "Cập nhật thành công!");
+                req.setAttribute("message", "Thêm người dùng thành công!");
             }
+
+            else if (uri.contains("/update")) {
+                dao.update(user);
+                req.setAttribute("message", "Cập nhật người dùng thành công!");
+            }
+
         } catch (Exception e) {
-            req.setAttribute("error", "Lỗi xử lý dữ liệu: " + e.getMessage());
+            e.printStackTrace();
+            req.setAttribute("error", "Lỗi xử lý dữ liệu!");
         }
 
-        this.findAll(req, resp);
-        req.getRequestDispatcher("/views/admin/user-manager.jsp").forward(req, resp);
-    }
-
-    private void findAll(HttpServletRequest req, HttpServletResponse resp) {
         List<Users> list = dao.findAll();
         req.setAttribute("items", list);
+
+        req.getRequestDispatcher("/views/admin/user-manager.jsp")
+                .forward(req, resp);
     }
 }

@@ -2,6 +2,7 @@ package controller;
 
 import dao.ViewHistoryDAO;
 import dao.ViewHistoryImpl;
+import entity.Users;
 import entity.ViewHistory;
 
 import jakarta.servlet.ServletException;
@@ -19,30 +20,41 @@ public class HistoryServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        // ⚠️ GIẢ LẬP LOGIN (sau này thay bằng session)
-        String userId = "u1";
+        // ===== 1. CHECK LOGIN =====
+        HttpSession session = req.getSession(false);
+        Users user = (session != null)
+                ? (Users) session.getAttribute("authUser")
+                : null;
 
+        if (user == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+
+        // ===== 2. LẤY HISTORY =====
         ViewHistoryDAO dao = new ViewHistoryImpl();
-        List<ViewHistory> list = dao.findByUser(userId);
 
-        // 🔥 FORMAT LocalDateTime → String để JSP hiển thị
-        DateTimeFormatter formatter =
+        // ⚠️ DAO NHẬN STRING → PHẢI toString()
+        List<ViewHistory> list =
+                dao.findByUser(user.getUserId());
+
+
+        // ===== 3. FORMAT THỜI GIAN =====
+        DateTimeFormatter fmt =
                 DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-        list.forEach(h -> {
-            if (h.getViewedAt() != null) {
-                h.setViewedAtFormatted(
-                        h.getViewedAt().format(formatter)
+        list.forEach(v -> {
+            if (v.getViewedAt() != null) {
+                v.setViewedAtFormatted(
+                        v.getViewedAt().format(fmt)
                 );
             }
         });
 
+        // ===== 4. GỬI QUA JSP =====
         req.setAttribute("list", list);
-
-        // gắn content
         req.setAttribute("contentPage", "/views/history.jsp");
 
-        // đi qua layout
         req.getRequestDispatcher("/views/layout.jsp")
                 .forward(req, resp);
     }

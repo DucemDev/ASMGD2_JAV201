@@ -15,8 +15,9 @@ import java.time.LocalDateTime;
 public class ViewHistory {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "HistoryId")
-    private String historyId;
+    private Integer historyId;   // 🔥 INTEGER – DB sinh
 
     @Column(name = "ViewedAt")
     private LocalDateTime viewedAt;
@@ -28,7 +29,7 @@ public class ViewHistory {
     @ManyToOne
     @JoinColumn(name = "RestaurantId")
     private Restaurant restaurant;
+
     @Transient
     private String viewedAtFormatted;
-
 }

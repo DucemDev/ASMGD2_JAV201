@@ -1,12 +1,16 @@
 package dao;
 
-import entity.Restaurant;
+import entity.Favorite;
 import java.util.List;
 
 public interface FavoriteDAO {
-    boolean isLiked(String userId, String restaurantId);
-    void like(String userId, String restaurantId);
-    List<Restaurant> findLikedByUser(String userId);
-    void unlike(String userId, String restaurantId);
 
+    void like(Integer userId, Integer restaurantId);
+
+    void unlike(Integer userId, Integer restaurantId);
+
+    boolean isLiked(Integer userId, Integer restaurantId);
+
+    // 🔥 BẠN ĐANG THIẾU METHOD NÀY TRONG IMPL
+    List<Favorite> findLikedByUser(Integer userId);
 }

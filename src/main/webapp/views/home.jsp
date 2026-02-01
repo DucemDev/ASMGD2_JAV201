@@ -5,23 +5,59 @@
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 
-<c:forEach var="r" items="${list}">
-    <img src="/images/${r.posterUrl}" width="200">
+<h3 class="mb-4">Danh sách quán ăn</h3>
 
-    <h3>${r.name}</h3>
-    <p>Lượt xem: ${r.viewCount}</p>
+<c:choose>
+    <c:when test="${empty list}">
+        <div class="alert alert-warning">
+            Không có dữ liệu quán ăn.
+        </div>
+    </c:when>
 
-    <a href="${pageContext.request.contextPath}/restaurant/detail?id=${r.restaurantId}">
-        Xem chi tiết
-    </a>
+    <c:otherwise>
+        <div class="row g-4">
+            <c:forEach var="r" items="${list}">
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm border-0">
 
-    <a href="${pageContext.request.contextPath}/like?id=${r.restaurantId}">
-        Like
-    </a>
+                        <!-- IMAGE -->
+                        <img src="${pageContext.request.contextPath}/images/${r.posterUrl}"
+                             class="card-img-top"
+                             alt="${r.name}"
+                             style="height:180px; object-fit:cover;">
 
-    <a href="${pageContext.request.contextPath}/share?id=${r.restaurantId}">
-        Share
-    </a>
+                        <!-- BODY -->
+                        <div class="card-body">
+                            <h5 class="card-title fw-semibold">
+                                    ${r.name}
+                            </h5>
 
-    <hr>
-</c:forEach>
+                            <p class="text-muted mb-2">
+                                Lượt xem: ${r.viewCount}
+                            </p>
+                        </div>
+
+                        <!-- ACTIONS -->
+                        <div class="card-footer bg-white border-0 text-center">
+                            <a href="${pageContext.request.contextPath}/restaurant/detail?id=${r.restaurantId}"
+                               class="btn btn-primary btn-sm me-1">
+                                Xem chi tiết
+                            </a>
+
+                            <a href="${pageContext.request.contextPath}/like?id=${r.restaurantId}"
+                               class="btn btn-outline-danger btn-sm me-1">
+                                Yêu thích
+                            </a>
+
+                            <a href="${pageContext.request.contextPath}/share?id=${r.restaurantId}"
+                               class="btn btn-outline-secondary btn-sm">
+                                Chia sẻ
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </c:forEach>
+        </div>
+    </c:otherwise>
+</c:choose>

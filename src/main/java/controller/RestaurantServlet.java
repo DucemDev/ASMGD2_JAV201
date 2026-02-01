@@ -3,58 +3,85 @@ package controller;
 import dao.RestaurantDAO;
 import dao.RestaurantImpl;
 import entity.Restaurant;
+import entity.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet({"/restaurant/index", "/restaurant/create", "/restaurant/edit", "/restaurant/update", "/restaurant/delete", "/restaurant/reset"})
+@WebServlet({
+        "/admin/restaurant",
+        "/admin/restaurant/create",
+        "/admin/restaurant/update",
+        "/admin/restaurant/delete"
+})
 public class RestaurantServlet extends HttpServlet {
-    RestaurantDAO dao = new RestaurantImpl();
+
+    private final RestaurantDAO dao = new RestaurantImpl();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        // ===== CHECK ADMIN =====
+        Users admin = (Users) req.getSession().getAttribute("authUser");
+        if (admin == null || !admin.isRole()) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+
         String uri = req.getRequestURI();
 
-        if (uri.contains("edit")) {
-            String id = req.getParameter("id");
-            req.setAttribute("form", dao.findbyid(id));
-        } else if (uri.contains("delete")) {
-            dao.delete(req.getParameter("id"));
-        } else if (uri.contains("reset")) {
+        // ===== DELETE =====
+        if (uri.contains("/delete")) {
+            Integer id = Integer.parseInt(req.getParameter("id"));
+            dao.delete(id);
+            resp.sendRedirect(req.getContextPath() + "/admin/restaurant");
+            return;
+        }
+
+        // ===== EDIT =====
+        if (uri.contains("/edit")) {
+            Integer id = Integer.parseInt(req.getParameter("id"));
+            Restaurant r = dao.findById(id); // ✅ SỬA
+            req.setAttribute("form", r);
+        } else {
             req.setAttribute("form", new Restaurant());
         }
 
-        List<Restaurant> list = dao.findall();
+        // ===== LOAD LIST =====
+        List<Restaurant> list = dao.findAll(); // ✅ SỬA
         req.setAttribute("items", list);
-        req.getRequestDispatcher("/views/admin/restaurant-manager.jsp").forward(req, resp);
+
+        req.getRequestDispatcher("/views/admin/restaurant.jsp")
+                .forward(req, resp);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
         String uri = req.getRequestURI();
 
-        // Tạo đối tượng từ tham số form
+        Integer id = (req.getParameter("id") != null && !req.getParameter("id").isEmpty())
+                ? Integer.parseInt(req.getParameter("id"))
+                : null;
+
         Restaurant r = new Restaurant();
-        r.setRestaurantId(req.getParameter("id"));
+        r.setRestaurantId(id);
         r.setName(req.getParameter("name"));
         r.setPosterUrl(req.getParameter("poster"));
         r.setVideoUrl(req.getParameter("video"));
 
-        if (uri.contains("create")) {
+        if (uri.contains("/create")) {
             r.setViewCount(0);
             dao.create(r);
-        } else if (uri.contains("update")) {
-            // Lấy lại viewCount cũ từ DB để không bị mất khi update
-            Restaurant old = dao.findbyid(r.getRestaurantId());
-            r.setViewCount(old != null ? old.getViewCount() : 0);
+        } else if (uri.contains("/update")) {
             dao.update(r);
         }
 
-        resp.sendRedirect(req.getContextPath() + "/restaurant/index");
+        resp.sendRedirect(req.getContextPath() + "/admin/restaurant");
     }
 }

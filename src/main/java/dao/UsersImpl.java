@@ -3,6 +3,7 @@ package dao;
 import entity.Users;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import util.JpaUtil;
 import util.XJPA;
 
 import java.util.List;
@@ -10,8 +11,8 @@ import java.util.List;
 public class UsersImpl implements UsersDAO {
 
     @Override
-    public Users findById(String id) {
-        EntityManager em = XJPA.getEntityManager();
+    public Users findById(Integer id) {
+        EntityManager em = JpaUtil.getEntityManager();
         try {
             return em.find(Users.class, id);
         } finally {
@@ -60,18 +61,15 @@ public class UsersImpl implements UsersDAO {
     }
 
     @Override
-    public void delete(String id) {
-        EntityManager em = XJPA.getEntityManager();
+    public void delete(Integer id) {
+        EntityManager em = JpaUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            Users user = em.find(Users.class, id);
-            if (user != null) {
-                em.remove(user);
+            Users u = em.find(Users.class, id);
+            if (u != null) {
+                em.remove(u);
             }
             em.getTransaction().commit();
-        } catch (Exception e) {
-            em.getTransaction().rollback();
-            throw e;
         } finally {
             em.close();
         }

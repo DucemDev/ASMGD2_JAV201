@@ -8,25 +8,19 @@ import util.XJPA;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 public class ViewHistoryImpl implements ViewHistoryDAO {
 
     @Override
-    public void create(String userId, String restaurantId) {
+    public void create(Integer userId, Integer restaurantId) {
         EntityManager em = XJPA.getEntityManager();
         try {
             em.getTransaction().begin();
 
             ViewHistory vh = new ViewHistory();
-            vh.setHistoryId(UUID.randomUUID().toString());
             vh.setUser(em.find(Users.class, userId));
             vh.setRestaurant(em.find(Restaurant.class, restaurantId));
             vh.setViewedAt(LocalDateTime.now());
-
-
-
-
 
             em.persist(vh);
             em.getTransaction().commit();
@@ -36,7 +30,7 @@ public class ViewHistoryImpl implements ViewHistoryDAO {
     }
 
     @Override
-    public List<ViewHistory> findByUser(String userId) {
+    public List<ViewHistory> findByUser(Integer userId) {
         EntityManager em = XJPA.getEntityManager();
         try {
             return em.createQuery(
@@ -44,12 +38,6 @@ public class ViewHistoryImpl implements ViewHistoryDAO {
                             SELECT v
                             FROM ViewHistory v
                             WHERE v.user.userId = :uid
-                              AND v.historyId IN (
-                                  SELECT MAX(v2.historyId)
-                                  FROM ViewHistory v2
-                                  WHERE v2.user.userId = :uid
-                                  GROUP BY v2.restaurant.restaurantId
-                              )
                             ORDER BY v.viewedAt DESC
                             """,
                             ViewHistory.class
@@ -60,14 +48,4 @@ public class ViewHistoryImpl implements ViewHistoryDAO {
             em.close();
         }
     }
-
-
-
-
-
-
-
-
-
-
 }

@@ -2,6 +2,8 @@ package controller;
 
 import dao.SharesDAO;
 import dao.SharesImpl;
+import entity.Users;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -15,10 +17,15 @@ public class ShareServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String restaurantId = req.getParameter("id");
+        String idParam = req.getParameter("id");
+        if (idParam == null) {
+            resp.sendRedirect(req.getContextPath() + "/home");
+            return;
+        }
 
-        req.setAttribute("restaurantId", restaurantId);
-        req.setAttribute("contentPage", "share.jsp");
+        // truyền restaurantId sang JSP
+        req.setAttribute("restaurantId", idParam);
+        req.setAttribute("contentPage", "/views/share.jsp");
 
         req.getRequestDispatcher("/views/layout.jsp")
                 .forward(req, resp);
@@ -28,11 +35,13 @@ public class ShareServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String restaurantId = req.getParameter("restaurantId");
-        String email = req.getParameter("email");
+        Users user = (Users) req.getSession().getAttribute("authUser");
+        Integer userId = user.getUserId();
 
-        // TẠM GIẢ LẬP USER (CHƯA LOGIN)
-        String userId = "u1";
+        Integer restaurantId =
+                Integer.parseInt(req.getParameter("restaurantId"));
+
+        String email = req.getParameter("email");
 
         SharesDAO dao = new SharesImpl();
         dao.share(userId, restaurantId, email);

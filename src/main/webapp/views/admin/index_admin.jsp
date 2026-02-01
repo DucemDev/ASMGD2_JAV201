@@ -22,9 +22,9 @@
     <li>
         <a href="<c:url value='/page/user' />">Quản lý người dùng</a>
     </li>
-    <li>
-        <a href="<c:url value='/home' />">Trang chủ</a>
-    </li>
+<%--    <li>--%>
+<%--        <a href="<c:url value='/home' />">Trang chủ</a>--%>
+<%--    </li>--%>
 </ul>
 
 

@@ -2,19 +2,15 @@ package controller;
 
 import dao.RestaurantDAO;
 import dao.RestaurantImpl;
+import dao.ViewHistoryDAO;
+import dao.ViewHistoryImpl;
 import entity.Restaurant;
-import entity.ViewHistory;
 import entity.Users;
-import jakarta.persistence.EntityManager;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import util.XJPA;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @WebServlet("/restaurant/detail")
 public class RestaurantDetailServlet extends HttpServlet {
@@ -23,49 +19,50 @@ public class RestaurantDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String id = req.getParameter("id");
-        if (id == null) {
+        // 1️⃣ LẤY ID
+        String idParam = req.getParameter("id");
+        if (idParam == null) {
             resp.sendRedirect(req.getContextPath() + "/home");
             return;
         }
 
+        Integer restaurantId;
+        try {
+            restaurantId = Integer.parseInt(idParam);
+        } catch (NumberFormatException e) {
+            resp.sendRedirect(req.getContextPath() + "/home");
+            return;
+        }
+
+        // 2️⃣ LOAD RESTAURANT
         RestaurantDAO dao = new RestaurantImpl();
-        Restaurant restaurant = dao.findbyid(id);
+        Restaurant restaurant = dao.findById(restaurantId); // ✅ SỬA Ở ĐÂY
 
         if (restaurant == null) {
             resp.sendRedirect(req.getContextPath() + "/home");
             return;
         }
 
-        // 1️⃣ TĂNG VIEW COUNT
+        // 3️⃣ TĂNG VIEW
         restaurant.setViewCount(restaurant.getViewCount() + 1);
         dao.update(restaurant);
 
-        // 2️⃣ LƯU VIEW HISTORY (GIẢ LẬP USER)
-        EntityManager em = XJPA.getEntityManager();
-        try {
-            em.getTransaction().begin();
+        // 4️⃣ LƯU VIEW HISTORY (NẾU ĐÃ LOGIN)
+        HttpSession session = req.getSession(false);
+        Users authUser = (session != null)
+                ? (Users) session.getAttribute("authUser")
+                : null;
 
-            ViewHistory vh = new ViewHistory();
-            vh.setHistoryId(UUID.randomUUID().toString());
-            vh.setRestaurant(restaurant);
-            vh.setViewedAt(LocalDateTime.now());
-
-
-
-            // giả lập user u1
-            Users user = em.find(Users.class, "u1");
-            vh.setUser(user);
-
-            em.persist(vh);
-            em.getTransaction().commit();
-        } finally {
-            em.close();
+        if (authUser != null) {
+            ViewHistoryDAO historyDAO = new ViewHistoryImpl();
+            historyDAO.create(authUser.getUserId(), restaurantId);
         }
 
-        // 3️⃣ GỬI DATA QUA JSP
+        // 5️⃣ GỬI QUA JSP
         req.setAttribute("restaurant", restaurant);
         req.setAttribute("contentPage", "/views/detail.jsp");
-        req.getRequestDispatcher("/views/layout.jsp").forward(req, resp);
+
+        req.getRequestDispatcher("/views/layout.jsp")
+                .forward(req, resp);
     }
 }

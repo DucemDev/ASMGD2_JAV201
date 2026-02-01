@@ -5,8 +5,9 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 public class XJPA {
-   static String DBNAME = "RestaurantDB";
-    private static final EntityManagerFactory factory = Persistence.createEntityManagerFactory(DBNAME);
+    private static final EntityManagerFactory factory =
+            Persistence.createEntityManagerFactory("RestaurantDB");
+
     public static EntityManager getEntityManager() {
         return factory.createEntityManager();
     }

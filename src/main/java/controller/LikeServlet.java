@@ -1,5 +1,8 @@
 package controller;
 
+import dao.FavoriteDAO;
+import dao.FavoriteImpl;
+import entity.Users;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import jakarta.servlet.*;
@@ -12,12 +15,19 @@ public class LikeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String restaurantId = req.getParameter("id");
-        String userId = (String) req.getSession().getAttribute("userId");
+        Users user = (Users) req.getSession().getAttribute("authUser");
+        Integer userId = user.getUserId();
 
-        // test tạm
-        System.out.println("LIKE SERVLET HIT: " + restaurantId);
+        Integer restaurantId =
+                Integer.parseInt(req.getParameter("id"));
+
+        FavoriteDAO dao = new FavoriteImpl();
+        dao.like(userId, restaurantId);
 
         resp.sendRedirect(req.getHeader("Referer"));
     }
 }
+
+
+
+

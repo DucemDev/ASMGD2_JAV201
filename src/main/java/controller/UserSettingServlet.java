@@ -22,7 +22,7 @@ public class UserSettingServlet extends HttpServlet {
                 ? (Users) session.getAttribute("authUser")
                 : null;
 
-        // 🔐 CHẶN CHƯA LOGIN
+        // 🔐 CHƯA LOGIN → ĐẨY QUA LOGIN
         if (authUser == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
@@ -37,8 +37,9 @@ public class UserSettingServlet extends HttpServlet {
             return;
         }
 
-        // MẶC ĐỊNH: HIỂN THỊ SETTING
-        req.getRequestDispatcher("/views/user-setting.jsp")
+        // ✅ HIỂN THỊ SETTING QUA LAYOUT
+        req.setAttribute("contentPage", "/views/user-setting.jsp");
+        req.getRequestDispatcher("/views/layout.jsp")
                 .forward(req, resp);
     }
 
@@ -67,7 +68,6 @@ public class UserSettingServlet extends HttpServlet {
             if (!authUser.getPassword().equals(oldPass)) {
                 req.setAttribute("error", "Mật khẩu cũ không đúng");
             } else {
-                // JPQL UPDATE – không stale
                 userDao.resetPassword(authUser.getEmail(), newPass);
 
                 authUser.setPassword(newPass);
@@ -88,7 +88,9 @@ public class UserSettingServlet extends HttpServlet {
             req.setAttribute("message", "Cập nhật thông tin thành công");
         }
 
-        req.getRequestDispatcher("/views/user-setting.jsp")
+        // ✅ LUÔN QUAY LẠI LAYOUT
+        req.setAttribute("contentPage", "/views/user-setting.jsp");
+        req.getRequestDispatcher("/views/layout.jsp")
                 .forward(req, resp);
     }
 }

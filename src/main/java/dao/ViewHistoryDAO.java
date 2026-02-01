@@ -4,6 +4,8 @@ import entity.ViewHistory;
 import java.util.List;
 
 public interface ViewHistoryDAO {
-    void create(String userId, String restaurantId);
-    List<ViewHistory> findByUser(String userId);
+
+    void create(Integer userId, Integer restaurantId);
+
+    List<ViewHistory> findByUser(Integer userId);
 }

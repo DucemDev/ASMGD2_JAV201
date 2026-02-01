@@ -8,18 +8,68 @@ import util.XJPA;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 public class FavoriteImpl implements FavoriteDAO {
 
     @Override
-    public boolean isLiked(String userId, String restaurantId) {
+    public void like(Integer userId, Integer restaurantId) {
+        EntityManager em = XJPA.getEntityManager();
+        try {
+            em.getTransaction().begin();
+
+            // nếu đã like rồi thì không insert nữa
+            if (isLiked(userId, restaurantId)) {
+                em.getTransaction().rollback();
+                return;
+            }
+
+            Favorite f = new Favorite();
+            f.setUser(em.find(Users.class, userId));
+            f.setRestaurant(em.find(Restaurant.class, restaurantId));
+            f.setLikedAt(LocalDateTime.now());
+
+            em.persist(f);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void unlike(Integer userId, Integer restaurantId) {
+        EntityManager em = XJPA.getEntityManager();
+        try {
+            em.getTransaction().begin();
+
+            em.createQuery(
+                            "DELETE FROM Favorite f " +
+                                    "WHERE f.user.userId = :uid " +
+                                    "AND f.restaurant.restaurantId = :rid"
+                    )
+                    .setParameter("uid", userId)
+                    .setParameter("rid", restaurantId)
+                    .executeUpdate();
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public boolean isLiked(Integer userId, Integer restaurantId) {
         EntityManager em = XJPA.getEntityManager();
         try {
             Long count = em.createQuery(
                             "SELECT COUNT(f) FROM Favorite f " +
-                                    "WHERE f.user.UserId = :uid " +          // 👈 VIẾT HOA
-                                    "AND f.restaurant.RestaurantId = :rid", // 👈 VIẾT HOA
+                                    "WHERE f.user.userId = :uid " +
+                                    "AND f.restaurant.restaurantId = :rid",
                             Long.class
                     )
                     .setParameter("uid", userId)
@@ -31,57 +81,16 @@ public class FavoriteImpl implements FavoriteDAO {
             em.close();
         }
     }
-    @Override
-    public void unlike(String userId, String restaurantId) {
-        EntityManager em = XJPA.getEntityManager();
-        try {
-            em.getTransaction().begin();
-
-            em.createQuery(
-                            "DELETE FROM Favorite f " +
-                                    "WHERE f.user.UserId = :uid " +
-                                    "AND f.restaurant.RestaurantId = :rid"
-                    )
-                    .setParameter("uid", userId)
-                    .setParameter("rid", restaurantId)
-                    .executeUpdate();
-
-            em.getTransaction().commit();
-        } finally {
-            em.close();
-        }
-    }
 
     @Override
-    public void like(String userId, String restaurantId) {
-        EntityManager em = XJPA.getEntityManager();
-        try {
-            em.getTransaction().begin();
-
-            Users user = em.find(Users.class, userId);
-            Restaurant restaurant = em.find(Restaurant.class, restaurantId);
-
-            Favorite f = new Favorite();
-            f.setFavoriteId(UUID.randomUUID().toString());
-            f.setUser(user);
-            f.setRestaurant(restaurant);
-            f.setLikedAt(LocalDateTime.now());
-
-            em.persist(f);
-            em.getTransaction().commit();
-        } finally {
-            em.close();
-        }
-    }
-
-    @Override
-    public List<Restaurant> findLikedByUser(String userId) {
+    public List<Favorite> findLikedByUser(Integer userId) {
         EntityManager em = XJPA.getEntityManager();
         try {
             return em.createQuery(
-                            "SELECT f.restaurant FROM Favorite f " +
-                                    "WHERE f.user.UserId = :uid", // 👈 VIẾT HOA
-                            Restaurant.class
+                            "SELECT f FROM Favorite f " +
+                                    "WHERE f.user.userId = :uid " +
+                                    "ORDER BY f.likedAt DESC",
+                            Favorite.class
                     )
                     .setParameter("uid", userId)
                     .getResultList();

@@ -57,11 +57,10 @@ public class LoginServlet extends HttpServlet {
         session.setAttribute("authUser", user);
 
 
-        if (user.isRole()) {
-            resp.sendRedirect(req.getContextPath() + "/views/admin/index_admin.jsp");
-        } else {
-            resp.sendRedirect(req.getContextPath() + "/");
-        }
+        // Sau khi login → ai cũng về HOME
+        resp.sendRedirect(req.getContextPath() + "/home");
+
+
 
     }
 }

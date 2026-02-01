@@ -11,12 +11,14 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "Restaurant", schema = "dbo")
+@Table(name = "Restaurant")
 public class Restaurant {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RestaurantId")
-    private String restaurantId;
+    private Integer restaurantId;
+
 
     @Column(name = "Name")
     private String name;
@@ -35,9 +37,6 @@ public class Restaurant {
 
     @OneToMany(mappedBy = "restaurant")
     private List<Shares> shares;
-
-    @OneToMany(mappedBy = "restaurant")
-    private List<Comment> comments;
 
     @OneToMany(mappedBy = "restaurant")
     private List<ViewHistory> viewHistory;

@@ -15,8 +15,9 @@ import java.time.LocalDateTime;
 public class Favorite {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "FavoriteId")
-    private String favoriteId;
+    private Integer favoriteId;   // ✅ PHẢI LÀ Integer
 
     @Column(name = "LikedAt")
     private LocalDateTime likedAt;

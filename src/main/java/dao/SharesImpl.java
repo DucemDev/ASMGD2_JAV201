@@ -7,28 +7,33 @@ import jakarta.persistence.EntityManager;
 import util.XJPA;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public class SharesImpl implements SharesDAO {
 
     @Override
-    public void share(String userId, String restaurantId, String email) {
+    public void share(Integer userId, Integer restaurantId, String email) {
+
         EntityManager em = XJPA.getEntityManager();
         try {
             em.getTransaction().begin();
 
+            Users user = em.find(Users.class, userId);
+            Restaurant restaurant = em.find(Restaurant.class, restaurantId);
+
+            if (user == null || restaurant == null) {
+                throw new RuntimeException("User hoặc Restaurant không tồn tại");
+            }
+
             Shares s = new Shares();
-            s.setShareId(UUID.randomUUID().toString());
+            // ❗ ShareId trong DB là INT IDENTITY → KHÔNG set tay
+            s.setUser(user);
+            s.setRestaurant(restaurant);
             s.setRecipientEmail(email);
-
-            // ✅ ĐÚNG TÊN + ĐÚNG KIỂU
             s.setSharedAt(LocalDateTime.now());
-
-            s.setUser(em.find(Users.class, userId));
-            s.setRestaurant(em.find(Restaurant.class, restaurantId));
 
             em.persist(s);
             em.getTransaction().commit();
+
         } finally {
             em.close();
         }

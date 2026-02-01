@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class Shares {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ShareId")
     private String shareId;
 
