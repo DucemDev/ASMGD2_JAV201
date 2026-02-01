@@ -1,12 +1,20 @@
-USE master
+USE master;
+GO
+
+IF EXISTS (SELECT name FROM sys.databases WHERE name = 'RestaurantDB')
+BEGIN
+    DROP DATABASE RestaurantDB;
+END
 GO
 
 CREATE DATABASE RestaurantDB;
 GO
 USE RestaurantDB;
 GO
+
+/* ================= USERS ================= */
 CREATE TABLE Users (
-    UserId VARCHAR(36) PRIMARY KEY,
+    UserId INT IDENTITY(1,1) PRIMARY KEY,
     UserName VARCHAR(100) NOT NULL,
     Email VARCHAR(150) NOT NULL UNIQUE,
     Password VARCHAR(255) NOT NULL,
@@ -15,113 +23,73 @@ CREATE TABLE Users (
     Status BIT NOT NULL
 );
 
-
+/* ================= RESTAURANT ================= */
 CREATE TABLE Restaurant (
-    RestaurantId VARCHAR(36) PRIMARY KEY,
+    RestaurantId INT IDENTITY(1,1) PRIMARY KEY,
     Name VARCHAR(150) NOT NULL,
     PosterUrl VARCHAR(255),
     VideoUrl VARCHAR(255),
     ViewCount INT DEFAULT 0
 );
 
-
+/* ================= FAVORITE ================= */
 CREATE TABLE Favorite (
-    FavoriteId VARCHAR(36) PRIMARY KEY,
-    UserId VARCHAR(36) NOT NULL,
-    RestaurantId VARCHAR(36) NOT NULL,
+    FavoriteId INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    RestaurantId INT NOT NULL,
     LikedAt DATE,
-
-    CONSTRAINT FK_Favorite_User
-        FOREIGN KEY (UserId) REFERENCES Users(UserId),
-
-    CONSTRAINT FK_Favorite_Restaurant
-        FOREIGN KEY (RestaurantId) REFERENCES Restaurant(RestaurantId)
+    CONSTRAINT FK_Favorite_User FOREIGN KEY (UserId) REFERENCES Users(UserId),
+    CONSTRAINT FK_Favorite_Restaurant FOREIGN KEY (RestaurantId) REFERENCES Restaurant(RestaurantId)
 );
 
-
+/* ================= VIEW HISTORY ================= */
 CREATE TABLE ViewHistory (
-    HistoryId VARCHAR(36) PRIMARY KEY,
-    UserId VARCHAR(36) NOT NULL,
-    RestaurantId VARCHAR(36) NOT NULL,
+    HistoryId INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    RestaurantId INT NOT NULL,
     ViewedAt DATE,
-
-    CONSTRAINT FK_ViewHistory_User
-        FOREIGN KEY (UserId) REFERENCES Users(UserId),
-
-    CONSTRAINT FK_ViewHistory_Restaurant
-        FOREIGN KEY (RestaurantId) REFERENCES Restaurant(RestaurantId)
+    CONSTRAINT FK_ViewHistory_User FOREIGN KEY (UserId) REFERENCES Users(UserId),
+    CONSTRAINT FK_ViewHistory_Restaurant FOREIGN KEY (RestaurantId) REFERENCES Restaurant(RestaurantId)
 );
 
+/* ================= SHARES ================= */
 CREATE TABLE Shares (
-    ShareId VARCHAR(36) PRIMARY KEY,
-    UserId VARCHAR(36) NOT NULL,
-    RestaurantId VARCHAR(36) NOT NULL,
+    ShareId INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    RestaurantId INT NOT NULL,
     RecipientEmail VARCHAR(150),
     SharedAt DATE,
-
-    CONSTRAINT FK_Shares_User
-        FOREIGN KEY (UserId) REFERENCES Users(UserId),
-
-    CONSTRAINT FK_Shares_Restaurant
-        FOREIGN KEY (RestaurantId) REFERENCES Restaurant(RestaurantId)
+    CONSTRAINT FK_Shares_User FOREIGN KEY (UserId) REFERENCES Users(UserId),
+    CONSTRAINT FK_Shares_Restaurant FOREIGN KEY (RestaurantId) REFERENCES Restaurant(RestaurantId)
 );
 
+/* ================= COMMENT ================= */
 CREATE TABLE Comment (
-    CommentId VARCHAR(36) PRIMARY KEY,
-    UserId VARCHAR(36) NOT NULL,
-    RestaurantId VARCHAR(36) NOT NULL,
+    CommentId INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    RestaurantId INT NOT NULL,
     Content NVARCHAR(500) NOT NULL,
-    CreatedAt DATETIME,
-
-    CONSTRAINT FK_Comment_User
-        FOREIGN KEY (UserId) REFERENCES Users(UserId),
-
-    CONSTRAINT FK_Comment_Restaurant
-        FOREIGN KEY (RestaurantId) REFERENCES Restaurant(RestaurantId)
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    CONSTRAINT FK_Comment_User FOREIGN KEY (UserId) REFERENCES Users(UserId),
+    CONSTRAINT FK_Comment_Restaurant FOREIGN KEY (RestaurantId) REFERENCES Restaurant(RestaurantId)
 );
 
-
-
-
-INSERT INTO Users (UserId, UserName, Email, Password, Role, OtpCode, Status)
+/* ================= SAMPLE DATA ================= */
+INSERT INTO Users (UserName, Email, Password, Role, OtpCode, Status)
 VALUES
-('u1', 'Nguyen Van A', 'a@gmail.com', '123456', 0, NULL, 1),
-('u2', 'Tran Thi B', 'b@gmail.com', '123456', 0, NULL, 1),
-('u3', 'Le Van C', 'c@gmail.com', '123456', 0, NULL, 1),
-('admin1', 'Admin', 'admin@gmail.com', 'admin123', 1, NULL, 1);
+('Nguyen Van A', 'a@gmail.com', '123456', 0, NULL, 1),
+('Tran Thi B', 'b@gmail.com', '123456', 0, NULL, 1),
+('Le Van C', 'c@gmail.com', '123456', 0, NULL, 1),
+('Admin', 'admin@gmail.com', 'admin123', 1, NULL, 1);
 
-
-INSERT INTO Restaurant (RestaurantId, Name, PosterUrl, VideoUrl, ViewCount)
+INSERT INTO Restaurant (Name, PosterUrl, VideoUrl, ViewCount)
 VALUES
-('r1', 'Pho 24', 'pho24.jpg', 'https://youtube.com/pho24', 120),
-('r2', 'Bun Bo Hue O Xuân', 'bunbohue.jpg', 'https://youtube.com/bunbo', 90),
-('r3', 'Com Tam Ba Ghien', 'comtam.jpg', 'https://youtube.com/comtam', 150),
-('r4', 'Pizza 4P''s', 'pizza4ps.jpg', 'https://youtube.com/pizza4ps', 200),
-('r5', 'Highlands Coffee', 'highlands.jpg', 'https://youtube.com/highlands', 300),
-('r6', 'Gogi House', 'gogi.jpg', 'https://youtube.com/gogi', 180);
+('Pho 24', 'pho24.jpg', 'https://youtube.com/pho24', 120),
+('Bun Bo Hue O Xuân', 'bunbohue.jpg', 'https://youtube.com/bunbo', 90),
+('Com Tam Ba Ghien', 'comtam.jpg', 'https://youtube.com/comtam', 150),
+('Pizza 4P''s', 'pizza4ps.jpg', 'https://youtube.com/pizza4ps', 200),
+('Highlands Coffee', 'highlands.jpg', 'https://youtube.com/highlands', 300),
+('Gogi House', 'gogi.jpg', 'https://youtube.com/gogi', 180);
 
 
-INSERT INTO Favorite (FavoriteId, UserId, RestaurantId, LikedAt)
-VALUES
-('f1', 'u1', 'r1', '2026-01-01'),
-('f2', 'u1', 'r3', '2026-01-02'),
-('f3', 'u2', 'r3', '2026-01-03'),
-('f4', 'u2', 'r4', '2026-01-04'),
-('f5', 'u3', 'r5', '2026-01-05');
-
-
-INSERT INTO ViewHistory (HistoryId, UserId, RestaurantId, ViewedAt)
-VALUES
-('vh1', 'u1', 'r1', '2026-01-01'),
-('vh2', 'u1', 'r2', '2026-01-02'),
-('vh3', 'u1', 'r3', '2026-01-03'),
-('vh4', 'u2', 'r3', '2026-01-04'),
-('vh5', 'u3', 'r5', '2026-01-05');
-
-
-INSERT INTO Shares (ShareId, UserId, RestaurantId, RecipientEmail, SharedAt)
-VALUES
-('s1', 'u1', 'r1', 'friend1@gmail.com', '2026-01-01'),
-('s2', 'u1', 'r3', 'friend2@gmail.com', '2026-01-02'),
-('s3', 'u2', 'r4', 'friend3@gmail.com', '2026-01-03'),
-('s4', 'u3', 'r5', 'friend4@gmail.com', '2026-01-04');
+SELECT * FROM Users
