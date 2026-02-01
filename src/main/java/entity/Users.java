@@ -24,7 +24,7 @@ public class Users {
     @Column(name = "Password")
     private String password;
 
-    @Column(name = "Email")
+    @Column(name = "Email",  unique = true)
     private String email;
 
     @Column(name = "Role")
@@ -44,4 +44,7 @@ public class Users {
 
     @OneToMany(mappedBy = "user")
     private List<ViewHistory> viewHistory;
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments;
 }

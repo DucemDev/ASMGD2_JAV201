@@ -1,5 +1,6 @@
 package filter;
 
+import entity.Users;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.*;
@@ -18,16 +19,18 @@ public class AuthFilter implements Filter {
 
         HttpSession session = req.getSession(false);
 
-        if (session == null || session.getAttribute("userId") == null) {
-            // CHƯA LOGIN → QUAY LẠI TRANG TRƯỚC
-            String referer = req.getHeader("Referer");
-            resp.sendRedirect(
-                    referer != null ? referer : req.getContextPath() + "/home"
-            );
+        Users user = (session != null)
+                ? (Users) session.getAttribute("user")
+                : null;
+
+        if (user == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
         chain.doFilter(request, response);
     }
 }
+
+
 

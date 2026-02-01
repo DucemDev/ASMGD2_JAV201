@@ -37,5 +37,8 @@ public class Restaurant {
     private List<Shares> shares;
 
     @OneToMany(mappedBy = "restaurant")
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "restaurant")
     private List<ViewHistory> viewHistory;
 }

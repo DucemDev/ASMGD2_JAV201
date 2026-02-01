@@ -9,4 +9,6 @@ public interface UsersDAO {
     void create(Users user);
     void update(Users user);
     void delete(String id);
+    Users findByEmail(String email);
+
 }

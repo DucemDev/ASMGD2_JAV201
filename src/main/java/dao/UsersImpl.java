@@ -2,6 +2,7 @@ package dao;
 
 import entity.Users;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import util.XJPA;
 import java.util.List;
 
@@ -74,4 +75,22 @@ public class UsersImpl implements UsersDAO {
             em.close();
         }
     }
+
+
+
+    @Override
+    public Users findByEmail(String email) {
+        EntityManager em = XJPA.getEntityManager();
+        try {
+            String jpql = "SELECT u FROM Users u WHERE u.email = :email";
+            return em.createQuery(jpql, Users.class)
+                    .setParameter("email", email)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
 }

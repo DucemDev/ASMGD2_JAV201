@@ -1,7 +1,5 @@
 package controller;
 
-import dao.FavoriteDAO;
-import dao.FavoriteImpl;
 import dao.RestaurantDAO;
 import dao.RestaurantImpl;
 import entity.Restaurant;
@@ -11,11 +9,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@WebServlet("/home")
+@WebServlet({"/", "/home"})
 public class HomeServlet extends HttpServlet {
 
     @Override
@@ -37,14 +33,10 @@ public class HomeServlet extends HttpServlet {
 
         req.setAttribute("list", list);
 
-        // ⭐ CHỈ TÊN FILE, KHÔNG /views/
+        // layout + content
         req.setAttribute("contentPage", "home-content.jsp");
 
         req.getRequestDispatcher("/views/layout.jsp")
                 .forward(req, resp);
     }
 }
-
-
-
-
